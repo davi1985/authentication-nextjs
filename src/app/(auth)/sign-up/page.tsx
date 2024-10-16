@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import axios from 'axios'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -22,17 +23,23 @@ import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const schema = z.object({
   firstName: z.string().min(3, 'Informe seu nome'),
   lastName: z.string().min(3, 'Informe seu sobrenome'),
   email: z.string().email('Informe um e-mail válido'),
-  password: z.string().min(3, 'Informe a senha'),
+  password: z.string().min(6, 'Pelo menos 6 caracteres'),
 })
 
 type FormData = z.infer<typeof schema>
 
 export default function SignUp() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -43,8 +50,20 @@ export default function SignUp() {
     },
   })
 
-  const handleSubmit = form.handleSubmit((formData) => {
-    console.log(formData)
+  const handleSubmit = form.handleSubmit(async (formData) => {
+    try {
+      setIsLoading(true)
+      await axios.post('/api/auth/sign-up', formData)
+
+      router.push('sign-in')
+
+      toast.success('Conta cadastrada com sucesso!', {
+        description: 'Faça login agora mesmo',
+      })
+    } catch {
+      setIsLoading(false)
+      toast.error('Erro ao criar a sua conta')
+    }
   })
 
   return (
@@ -133,8 +152,9 @@ export default function SignUp() {
               )}
             />
 
-            <Button type="submit" className="w-full">
-              Criar conta
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && 'Criando a sua conta...'}
+              {!isLoading && 'Criar conta'}
             </Button>
 
             <Button variant="outline" className="w-full" type="button">
