@@ -20,7 +20,11 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -31,6 +35,10 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function SignIn() {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
+
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -39,8 +47,16 @@ export default function SignIn() {
     },
   })
 
-  const handleSubmit = form.handleSubmit((formData) => {
-    console.log(formData)
+  const handleSubmit = form.handleSubmit(async (formData) => {
+    try {
+      setIsLoading(true)
+      await axios.post('/api/auth/sign-in', formData)
+
+      router.push('/')
+    } catch {
+      setIsLoading(false)
+      toast.error('Credenciais inválidas!')
+    }
   })
 
   return (
@@ -106,8 +122,9 @@ export default function SignIn() {
               )}
             />
 
-            <Button type="submit" className="w-full">
-              Entrar
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {!isLoading && 'Entrar'}
+              {isLoading && 'Aguarde...'}
             </Button>
 
             <Button type="button" variant="outline" className="w-full">
