@@ -2,7 +2,7 @@ import { env } from '@/config/env'
 import { JwtPayload, verify } from 'jsonwebtoken'
 import { cookies } from 'next/headers'
 import { prismaClient } from './prismaClient'
-import { User } from '@/app/entities/User'
+import { User } from '@/entities/User'
 
 const getAccessToken = () => cookies().get('accessToken')?.value
 
