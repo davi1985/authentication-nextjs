@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers'
+import { getAccessToken } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 import { AppBar } from './_components/AppBar'
 
 const DashboardLayout = ({
@@ -6,7 +7,11 @@ const DashboardLayout = ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  console.log(cookies().get('accessToken')?.value)
+  const accessToken = getAccessToken()
+
+  if (!accessToken) {
+    redirect('/sign-in')
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
