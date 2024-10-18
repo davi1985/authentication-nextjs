@@ -9,9 +9,7 @@ const DashboardLayout = async ({
 }>) => {
   const user = await auth()
 
-  if (!user) {
-    redirect('/sign-in')
-  }
+  if (!user) redirect('/sign-in')
 
   return (
     <div className="flex min-h-screen w-full flex-col">
