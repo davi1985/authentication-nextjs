@@ -1,4 +1,4 @@
-import { getAccessToken } from '@/lib/auth'
+import { isAuthenticated } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 
 const AuthLayout = ({
@@ -6,11 +6,7 @@ const AuthLayout = ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const accessToken = getAccessToken()
-
-  if (accessToken) {
-    return redirect('/')
-  }
+  if (isAuthenticated()) return redirect('/')
 
   return (
     <div className={'min-h-screen grid place-items-center'}>{children}</div>

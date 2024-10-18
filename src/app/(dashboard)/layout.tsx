@@ -1,15 +1,15 @@
-import { getAccessToken } from '@/lib/auth'
+import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { AppBar } from './_components/AppBar'
 
-const DashboardLayout = ({
+const DashboardLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const accessToken = getAccessToken()
+  const user = await auth()
 
-  if (!accessToken) {
+  if (!user) {
     redirect('/sign-in')
   }
 
