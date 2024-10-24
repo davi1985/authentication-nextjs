@@ -28,9 +28,7 @@ export const auth = async (): Promise<User | null> => {
   if (!userId) return null
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-
-    return await prismaClient.user.findUnique({
+    return prismaClient.user.findUnique({
       where: {
         id: userId,
       },
